@@ -1,0 +1,100 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  role      String   // "CEO", "COO", "CTO", "HEAD_OF_RESEARCH", "PROJECT_HEAD", "INTERN"
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  tasks          Task[]
+  expenses       Expense[]
+  reports        Report[]
+  timesheets     Timesheet[]
+  managedInterns User[]      @relation("InternManager")
+  manager        User?       @relation("InternManager", fields: [managerId], references: [id])
+  managerId      String?
+}
+
+model Project {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  status      String   @default("ACTIVE") // ACTIVE, COMPLETED, ON_HOLD
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  tasks      Task[]
+  timesheets Timesheet[]
+  expenses   Expense[]
+}
+
+model Task {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  status      String   @default("TODO") // "TODO", "IN_PROGRESS", "DONE"
+  projectId   String
+  assigneeId  String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  project     Project     @relation(fields: [projectId], references: [id])
+  assignee    User        @relation(fields: [assigneeId], references: [id])
+  timesheets  Timesheet[]
+}
+
+model Expense {
+  id          String   @id @default(cuid())
+  amount      Float
+  description String
+  status      String   @default("PENDING") // PENDING, APPROVED, REJECTED
+  projectId   String?
+  userId      String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  project Project? @relation(fields: [projectId], references: [id])
+  user    User     @relation(fields: [userId], references: [id])
+}
+
+model Report {
+  id        String   @id @default(cuid())
+  title     String
+  type      String   // WEEKLY_PLAN, MONTHLY_PLAN, WORK_DONE
+  content   String
+  status    String   @default("SUBMITTED") // SUBMITTED, REVIEWED
+  userId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+model Timesheet {
+  id        String   @id @default(cuid())
+  date      DateTime
+  hours     Float
+  notes     String?
+  status    String   @default("PENDING") // PENDING, APPROVED, REJECTED
+  userId    String
+  projectId String
+  taskId    String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user    User     @relation(fields: [userId], references: [id])
+  project Project  @relation(fields: [projectId], references: [id])
+  task    Task?    @relation(fields: [taskId], references: [id])
+}

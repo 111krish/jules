@@ -1,0 +1,29 @@
+
+> cft-app@0.1.0 dev
+> next dev
+
+  ▲ Next.js 14.2.35
+  - Local:        http://localhost:3000
+  - Environments: .env
+
+ ✓ Starting...
+ ✓ Ready in 1697ms
+ ○ Compiling / ...
+ ✓ Compiled / in 4.3s (587 modules)
+ GET / 200 in 4678ms
+ ✓ Compiled in 434ms (266 modules)
+ GET / 200 in 49ms
+ POST / 200 in 40ms
+ ○ Compiling /reports ...
+ ✓ Compiled /reports in 784ms (568 modules)
+ GET / 200 in 129ms
+ POST / 200 in 64ms
+ POST /reports 200 in 76ms
+ POST / 200 in 49ms
+ POST /reports 200 in 29ms
+ ✓ Compiled in 316ms (267 modules)
+ ✓ Compiled in 311ms (267 modules)
+ ✓ Compiled in 1005ms (577 modules)
+ ✓ Compiled in 396ms (577 modules)
+ ✓ Compiled in 626ms (577 modules)
+ ✓ Compiled in 393ms (267 modules)
