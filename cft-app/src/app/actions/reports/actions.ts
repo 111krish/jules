@@ -25,6 +25,11 @@ export async function submitReport(formData: FormData) {
 }
 
 export async function markReportReviewed(reportId: string) {
+  const currentUser = await getCurrentUser()
+  if (!currentUser || !['CTO', 'CEO', 'COO'].includes(currentUser.role)) {
+    throw new Error("Not authorized to review reports")
+  }
+
   await prisma.report.update({
     where: { id: reportId },
     data: { status: 'REVIEWED' }

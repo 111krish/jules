@@ -57,7 +57,11 @@ export async function approveExpense(expenseId: string) {
 }
 
 export async function rejectExpense(expenseId: string) {
-  // Simplification for MVP: anyone who can approve can reject (or just standard managers)
+  const currentUser = await getCurrentUser()
+  if (!currentUser || !['PROJECT_HEAD', 'CTO', 'COO', 'CEO'].includes(currentUser.role)) {
+    throw new Error("Not authorized to reject expenses")
+  }
+
   await prisma.expense.update({
     where: { id: expenseId },
     data: { status: 'REJECTED' }

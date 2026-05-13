@@ -42,6 +42,15 @@ export async function createTask(formData: FormData) {
 }
 
 export async function updateTaskStatus(taskId: string, status: string) {
+  const currentUser = await getCurrentUser()
+  if (!currentUser) throw new Error("Not logged in")
+
+  const task = await prisma.task.findUnique({ where: { id: taskId } })
+  if (!task) throw new Error("Task not found")
+
+  const canUpdate = task.assigneeId === currentUser.id || ['CEO', 'COO', 'CTO', 'HEAD_OF_RESEARCH', 'PROJECT_HEAD'].includes(currentUser.role)
+  if (!canUpdate) throw new Error("Not authorized to update this task")
+
   await prisma.task.update({
     where: { id: taskId },
     data: { status }

@@ -27,6 +27,11 @@ export async function submitTimesheet(formData: FormData) {
 }
 
 export async function approveTimesheet(timesheetId: string) {
+  const currentUser = await getCurrentUser()
+  if (!currentUser || !['PROJECT_HEAD', 'CTO'].includes(currentUser.role)) {
+    throw new Error("Not authorized to approve timesheets")
+  }
+
   await prisma.timesheet.update({
     where: { id: timesheetId },
     data: { status: 'APPROVED' }
@@ -36,6 +41,11 @@ export async function approveTimesheet(timesheetId: string) {
 }
 
 export async function rejectTimesheet(timesheetId: string) {
+  const currentUser = await getCurrentUser()
+  if (!currentUser || !['PROJECT_HEAD', 'CTO'].includes(currentUser.role)) {
+    throw new Error("Not authorized to reject timesheets")
+  }
+
   await prisma.timesheet.update({
     where: { id: timesheetId },
     data: { status: 'REJECTED' }
